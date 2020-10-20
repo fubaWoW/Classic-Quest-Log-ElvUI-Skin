@@ -1,0 +1,8 @@
+## Interface: 90001
+## Title: Classic Quest Log ElvUI Skin
+## Notes: This addon skins the Classic Quest Log addon for ElvUI
+## Version: 1.0
+## Author: fuba
+## Dependencies: ElvUI
+
+CQL_ElvUISkin.lua
