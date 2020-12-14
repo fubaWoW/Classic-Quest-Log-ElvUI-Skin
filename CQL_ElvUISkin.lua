@@ -16,10 +16,10 @@ local function SkinForElvUI()
     end
   end
 
-  ClassicQuestLogScrollFrame:StripTextures()
+  --ClassicQuestLogScrollFrame:StripTextures()
   S:HandleScrollBar(ClassicQuestLogScrollFrameScrollBar)
 
-  ClassicQuestLogDetailScrollFrame:StripTextures()
+  --ClassicQuestLogDetailScrollFrame:StripTextures()
   S:HandleScrollBar(ClassicQuestLogDetailScrollFrameScrollBar)
 
   cql.options:StripTextures()
@@ -60,7 +60,8 @@ local function SkinForElvUI()
       cql.log.expandAll:SetNormalTexture(cql.log.somethingExpanded and E.Media.Textures.MinusButton or E.Media.Textures.PlusButton)
     end
   end)
-
+	
+	--[[
 	-- force "Dark Background" for ElvUI and disable "SolidBackground" button and CheckButton
 	ClassicQuestLog.options:Set("SolidBackground", true)
 	ClassicQuestLogOptionsScrollFrame.content["SolidBackground"].check:SetScript("OnEnter", nil)
@@ -87,7 +88,9 @@ local function SkinForElvUI()
 		self.text:SetTextColor(1,0.82,0,0.25)
 		self.description:SetTextColor(1,1,1,0.25)
 	end)
+	]]
 end
+
 
 cql:RegisterEvent("PLAYER_LOGIN")
 cql:HookScript("OnEvent", function(self, event, addon, ...)
