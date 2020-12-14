@@ -7,6 +7,9 @@ local function SkinForElvUI()
 
   cql:StripTextures()
   cql:SetTemplate("Transparent")
+	
+	-- fixed "cql.detail" missing BackdropTemplate
+	Mixin(cql.detail, BackdropTemplateMixin)
 
   S:HandleCloseButton(cql.CloseButton)
 
