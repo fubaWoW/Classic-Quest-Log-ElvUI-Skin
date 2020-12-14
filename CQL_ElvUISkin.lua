@@ -22,11 +22,11 @@ local function SkinForElvUI()
   --ClassicQuestLogDetailScrollFrame:StripTextures()
   S:HandleScrollBar(ClassicQuestLogDetailScrollFrameScrollBar)
 
-  cql.options:StripTextures()
+  --cql.options:StripTextures()
   ClassicQuestLogOptionsScrollFrame:SetTemplate("Transparent")
   S:HandleScrollBar(ClassicQuestLogOptionsScrollFrameScrollBar)
 	
-	cql.lore:StripTextures()
+	--cql.lore:StripTextures()
   ClassicQuestLogLoreScrollFrame:SetTemplate("Transparent")
   S:HandleScrollBar(ClassicQuestLogLoreScrollFrameScrollBar)
 	
