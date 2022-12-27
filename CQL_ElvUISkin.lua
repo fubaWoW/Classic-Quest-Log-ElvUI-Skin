@@ -7,8 +7,9 @@ local function SkinForElvUI()
 
   cql:StripTextures()
   cql:SetTemplate("Transparent")
-	
-	-- fixed "cql.detail" missing BackdropTemplate
+
+	-- fix if BackdropTemplate is missing
+	Mixin(ClassicQuestLogDetailScrollFrame, BackdropTemplateMixin)
 	Mixin(cql.detail, BackdropTemplateMixin)
 
   S:HandleCloseButton(cql.CloseButton)
@@ -19,43 +20,62 @@ local function SkinForElvUI()
     end
   end
 
-  --ClassicQuestLogScrollFrame:StripTextures()
   S:HandleScrollBar(ClassicQuestLogScrollFrameScrollBar)
-
-  --ClassicQuestLogDetailScrollFrame:StripTextures()
+	
   S:HandleScrollBar(ClassicQuestLogDetailScrollFrameScrollBar)
-
-  --cql.options:StripTextures()
+	
   ClassicQuestLogOptionsScrollFrame:SetTemplate("Transparent")
   S:HandleScrollBar(ClassicQuestLogOptionsScrollFrameScrollBar)
 	
-	--cql.lore:StripTextures()
   ClassicQuestLogLoreScrollFrame:SetTemplate("Transparent")
   S:HandleScrollBar(ClassicQuestLogLoreScrollFrameScrollBar)
-	
-  for k,v in pairs({"LockWindow","ShowResizeGrip","ShowLevels","ShowTooltips","SolidBackground","ShowFromObjectiveTracker"}) do
-    local cb = ClassicQuestLogOptionsScrollFrame.content[v].check
-    if cb then S:HandleCheckBox(cb) end
+
+  for k,v in pairs({"LockWindow","ShowResizeGrip","ShowLevels","ShowTooltips","ShowFromObjectiveTracker","DontOverrideBind","ShowMinimapButton","UseCustomScale"}) do
+		if ClassicQuestLogOptionsScrollFrame then
+			local cb = ClassicQuestLogOptionsScrollFrame.content[v].check
+			if cb then S:HandleCheckBox(cb) end
+		end
   end
 
+	-- skin the Quest Counter
   cql.chrome.countFrame:StripTextures()
   cql.chrome.countFrame:SetTemplate(nil, true)
   cql.chrome.countFrame.isSkinned = true
+	
+	-- fix Quest Count for Retail, becasue it is not 35 and Blizzard forgot to Update EVERYTHING at Client side...
+	hooksecurefunc(cql.chrome, "Update", function(self)
+		local maxquests = select(4,GetBuildInfo()) > 99999 and 35 or 25
+		cql.chrome.countFrame.text:SetText(format("%s \124cffffffff%d/%d",QUESTS_COLON,cql.log.numQuests or 0,maxquests))
+	end)
 
-  ClassicQuestLogScrollFrame.expandAll:StripTextures()
-  ClassicQuestLogScrollFrame.expandAll:ClearAllPoints()
-  ClassicQuestLogScrollFrame.expandAll:SetPoint('BOTTOMLEFT', cql, 'TOPLEFT', -1, -50)
+	-- skin the "campaignTooltip"
+	cql.campaignTooltip:StripTextures()
+	cql.campaignTooltip:SetTemplate(nil, true)
+	cql.campaignTooltip.isSkinned = true
 
-  hooksecurefunc(ClassicQuestLogScrollFrame, "UpdateListButton", function(self, button, info)
-    if ((not button) or (not info) or (type(info)~="table")) then return end
+	-- hook "UpdateListButton" to Skin the "expand" Buttton from Quest Headers
+	hooksecurefunc(cql.log, "UpdateListButton", function(self, button, info)
+		if ((not button) or (not info) or (type(info)~="table")) then return end
 
-    if info.isHeader then
-      local isCollapsed = ClassicQuestLogCollapsedHeaders[info.title]
-      button:SetNormalTexture(isCollapsed and E.Media.Textures.PlusButton or E.Media.Textures.MinusButton)
-    end
+		if info.isHeader then
+			local collapsedHeaders = ClassicQuestLogCollapsedHeaders
+			if button and button.expand then
+				local isCollapsed = collapsedHeaders[info.title]
+				button:StripTextures()
+				button.expand:StripTextures()
+				button.expand:SetTexture(isCollapsed and E.Media.Textures.PlusButton or E.Media.Textures.MinusButton)
+			end
+		else
+		end
+
   end)
 
-  hooksecurefunc(ClassicQuestLogScrollFrame, "UpdateLog", function(self)
+	-- Skin and repositioning the "expandAll" Button
+	cql.log.expandAll:StripTextures()
+  cql.log.expandAll:ClearAllPoints()
+  cql.log.expandAll:SetPoint('BOTTOMLEFT', cql, 'TOPLEFT', -1, -50)
+	
+	hooksecurefunc(cql.log, "HybridScrollFrameUpdate", function(self)
     local quests = cql.log.quests
     local numEntries = #quests
 
@@ -63,35 +83,6 @@ local function SkinForElvUI()
       cql.log.expandAll:SetNormalTexture(cql.log.somethingExpanded and E.Media.Textures.MinusButton or E.Media.Textures.PlusButton)
     end
   end)
-	
-	--[[
-	-- force "Dark Background" for ElvUI and disable "SolidBackground" button and CheckButton
-	ClassicQuestLog.options:Set("SolidBackground", true)
-	ClassicQuestLogOptionsScrollFrame.content["SolidBackground"].check:SetScript("OnEnter", nil)
-	ClassicQuestLogOptionsScrollFrame.content["SolidBackground"].check:SetScript("OnLeave", nil)
-	ClassicQuestLogOptionsScrollFrame.content["SolidBackground"].check:SetScript("OnClick", nil)
-	ClassicQuestLogOptionsScrollFrame.content["SolidBackground"].check:SetScript("OnShow", function(self)
-		self:SetChecked(true)
-		self:SetEnabled(false)
-	end)
-	
-		
-	ClassicQuestLogOptionsScrollFrame.content["SolidBackground"]:SetScript("OnEnter", nil)
-	ClassicQuestLogOptionsScrollFrame.content["SolidBackground"]:SetScript("OnLeave", nil)
-	ClassicQuestLogOptionsScrollFrame.content["SolidBackground"]:SetScript("OnMouseDown", nil)
-	ClassicQuestLogOptionsScrollFrame.content["SolidBackground"]:SetScript("OnMouseUp", nil)
-	ClassicQuestLogOptionsScrollFrame.content["SolidBackground"]:SetScript("OnClick", nil)
-	ClassicQuestLogOptionsScrollFrame.content["SolidBackground"]:SetScript("OnLoad", nil)
-	ClassicQuestLogOptionsScrollFrame.content["SolidBackground"]:SetScript("OnShow", function(self)
-		if not self.text.disabledbyskin then
-			local text = self.text:GetText()
-			self.text:SetText(text.." (disabled by Skin)")
-			self.text.disabledbyskin = true
-		end
-		self.text:SetTextColor(1,0.82,0,0.25)
-		self.description:SetTextColor(1,1,1,0.25)
-	end)
-	]]
 end
 
 
