@@ -1,4 +1,4 @@
-## Interface: 100002
+## Interface: 100005
 ## Title: Classic Quest Log ElvUI Skin
 ## Notes: This addon skins the Classic Quest Log addon for ElvUI
 ## Version: @project-version@
