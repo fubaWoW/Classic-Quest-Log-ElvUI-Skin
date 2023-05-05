@@ -3,6 +3,7 @@
 ## Notes: This addon skins the Classic Quest Log addon for ElvUI
 ## Version: @project-version@
 ## Author: fuba
+## IconTexture: Interface\AddOns\Classic-Quest-Log-ElvUI-Skin\fubaLogo
 ## Dependencies: ElvUI
 
 ## X-Curse-Project-ID: 414259
