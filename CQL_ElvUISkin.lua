@@ -2,15 +2,20 @@ if not ClassicQuestLog then return end
 local cql = ClassicQuestLog
 
 local function SkinForElvUI()
-  local E, L, P, G = unpack(ElvUI)
-  local S = E:GetModule("Skins")
+	local E, L, V, P, G = unpack(ElvUI)
+	local S = E:GetModule('Skins')
+
 
   cql:StripTextures()
   cql:SetTemplate("Transparent")
 
 	-- fix if BackdropTemplate is missing
+	Mixin(ClassicQuestLogScrollFrame, BackdropTemplateMixin)
 	Mixin(ClassicQuestLogDetailScrollFrame, BackdropTemplateMixin)
 	Mixin(cql.detail, BackdropTemplateMixin)
+	
+	ClassicQuestLog.detail:StripTextures()
+	ClassicQuestLog.detail:SetTemplate("Transparent")
 
   S:HandleCloseButton(cql.CloseButton)
 
@@ -20,15 +25,27 @@ local function SkinForElvUI()
     end
   end
 
+
+	-- ClassicQuestLogScrollFrame and ScrollBar
+	ClassicQuestLogScrollFrame:StripTextures()
+	ClassicQuestLogScrollFrame:SetTemplate("Transparent")
   S:HandleScrollBar(ClassicQuestLogScrollFrameScrollBar)
 	
-  S:HandleScrollBar(ClassicQuestLogDetailScrollFrameScrollBar)
-	
+	-- ClassicQuestLogDetailScrollFrame and ScrollBar
+	S:HandleTrimScrollBar(ClassicQuestLogDetailScrollFrame.ScrollBar)
+
+	-- ClassicQuestLogLoreScrollFrame and ScrollBar
+  ClassicQuestLogLoreScrollFrame:SetTemplate("Transparent")
+  S:HandleScrollBar(ClassicQuestLogLoreScrollFrameScrollBar)
+
+	-- ClassicQuestLogOptionsScrollFrame and ScrollBar
+	ClassicQuestLogOptionsScrollFrame:StripTextures()
   ClassicQuestLogOptionsScrollFrame:SetTemplate("Transparent")
   S:HandleScrollBar(ClassicQuestLogOptionsScrollFrameScrollBar)
 	
-  ClassicQuestLogLoreScrollFrame:SetTemplate("Transparent")
-  S:HandleScrollBar(ClassicQuestLogLoreScrollFrameScrollBar)
+	-- Custom Scale Slider
+	S:HandleSliderFrame(ClassicQuestLogOptionsScrollFrame.content.UseCustomScale.ScaleSlider)
+	S:HandleButton(ClassicQuestLogOptionsScrollFrame.content.UseCustomScale.SetButton)
 
   for k,v in pairs({"LockWindow","ShowResizeGrip","ShowLevels","ShowTooltips","ShowFromObjectiveTracker","DontOverrideBind","ShowMinimapButton","UseCustomScale"}) do
 		if ClassicQuestLogOptionsScrollFrame then
