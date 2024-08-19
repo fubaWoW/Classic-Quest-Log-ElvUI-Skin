@@ -1,25 +1,78 @@
 local IsAddOnLoaded = C_AddOns and C_AddOns.IsAddOnLoaded or IsAddOnLoaded
 
-local DEFAULT_TEXT_COLOR = CreateColor(1,1,1,1)
-local COMPLETED_TEXT_COLOR = CreateColor(0.2,1,0.2,1)
-local RED_TEXT_COLOR = CreateColor(0.5,0,0,1)
+local DEFAULT_TEXT_COLOR = CreateColor(1, 1, 1, 1)
+local COMPLETED_TEXT_COLOR = CreateColor(0.2, 1, 0.2, 1)
+local RED_TEXT_COLOR = CreateColor(0.5, 0, 0, 1)
 
-local FUBA_HEADER_COLOR = CreateColor(1,0.8,0.1,1)
-local FUBA_QUEST_ACCOUNT_COMPLETED_NOTICE_FONT_COLOR = CreateColor(0.4,0.4,0.4,1)
+local FUBA_HEADER_COLOR = CreateColor(1, 0.8, 0.1, 1)
+local FUBA_QUEST_ACCOUNT_COMPLETED_NOTICE_FONT_COLOR = CreateColor(0.4, 0.4, 0.4, 1)
+local FUBA_QUEST_OPTIONAL_FONT_COLOR = CreateColor(.4, 1, 1,1)
 
 local function InvertColor(r, g, b)
     return 1 - r, 1 - g, 1 - b
+end
+
+local function HandleReward(frame)
+	if not frame then return end
+	
+	local E, L, V, P, G = unpack(ElvUI)
+	local S = ElvUI[1]:GetModule('Skins')
+	
+	for _, Region in next, { frame:GetRegions() } do
+		if Region:IsObjectType('Texture') and Region:GetTexture() == [[Interface\Spellbook\Spellbook-Parts]] then
+			Region:SetTexture(E.ClearTexture)
+		end
+	end
+
+	if frame.Icon then
+		frame.Icon:SetDrawLayer('ARTWORK')
+		S:HandleIcon(frame.Icon, true)
+
+		if frame.IconBorder then
+			S:HandleIconBorder(frame.IconBorder, frame.Icon.backdrop)
+		end
+		
+		if frame.Rarity then
+			if (not frame.SetBackdrop) then Mixin(frame, BackdropTemplateMixin) end		
+			S:HandleIconBorder(frame.Rarity, frame.Icon.backdrop)			
+		end
+	end
+	
+	if frame.Count then
+		frame.Count:SetDrawLayer('OVERLAY')
+		frame.Count:ClearAllPoints()
+		frame.Count:Point('BOTTOMRIGHT', frame.Icon, 'BOTTOMRIGHT', 0, 0)
+	end
+
+	if frame.NameFrame then
+		frame.NameFrame:SetAlpha(0)
+		frame.NameFrame:Hide()
+	end
+
+	if frame.IconOverlay then
+		frame.IconOverlay:SetAlpha(0)
+	end
+
+	if frame.Name then
+		frame.Name:FontTemplate()
+	end
+
+	if frame.CircleBackground then
+		frame.CircleBackground:SetAlpha(0)
+		frame.CircleBackgroundGlow:SetAlpha(0)
+	end
 end
 
 local function SkinForElvUI()
 
 	if (not IsAddOnLoaded("ElvUI")) then return end
 	if (not IsAddOnLoaded("Classic Quest Log")) then return end
-
+	
 	local E, L, V, P, G = unpack(ElvUI)
-	local S = E:GetModule('Skins')
-
+	local S = ElvUI[1]:GetModule('Skins')
+	
 	local cql = ClassicQuestLog
+	if not cql then return end
 
 	cql:StripTextures()
 	cql:SetTemplate("Transparent")
@@ -129,7 +182,7 @@ local function SkinForElvUI()
 			if waypointText then
 				numVisibleObjectives = numVisibleObjectives + 1
 				objective = self:AcquireObjective(numVisibleObjectives)
-				objective:SetTextColor(DEFAULT_TEXT_COLOR:GetRGB())
+				objective:SetTextColor(FUBA_QUEST_OPTIONAL_FONT_COLOR:GetRGB())
 			end
 
 			for i=1,numObjectives do
@@ -230,6 +283,12 @@ local function SkinForElvUI()
 	end)
 
 
+	hooksecurefunc(cql.Detail, "FillReward", function(self, rewardButton,questID,rewardType,rewardIndex,objectType,id,name,icon,quality,amount)
+		if not rewardButton then return end
+		
+		HandleReward(rewardButton)
+	end)
+
 	--------------
 	--- Chrome ---
 	--------------
@@ -264,4 +323,3 @@ local function SkinForElvUI()
 end
 
 EventRegistry:RegisterFrameEventAndCallback("PLAYER_LOGIN", SkinForElvUI)
---EventRegistry:RegisterFrameEventAndCallback("PLAYER_ENTERING_WORLD", SkinForElvUI)
