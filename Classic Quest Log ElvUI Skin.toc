@@ -1,10 +1,14 @@
-## Interface: 110207
+## Interface: 120007, 120000, 110207
 ## Title: Classic Quest Log ElvUI Skin
 ## Notes: This addon skins the Classic Quest Log addon for ElvUI
 ## Version: @project-version@
 ## Author: fuba
 ## IconTexture: Interface\AddOns\Classic-Quest-Log-ElvUI-Skin\fubaLogo
 ## Dependencies: ElvUI
+
+## X-Category: |cffff8000fuba
+## Category-enUS: |cffff8000fuba
+## Category-deDE: |cffff8000fuba
 
 ## X-Curse-Project-ID: 414259
 
